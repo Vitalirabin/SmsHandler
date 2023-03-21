@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">SmsReceiver</string>
+    <string name="app_name">SmsHandler</string>
 
     <string name="enter_token">Введите токен</string>
     <string name="enter_login">Введите логин</string>
     <string name="enter_password">Введите пароль</string>
     <string name="start_handle">Запустить отправку смс</string>
+
+    <string name="login_with_token_menu_title">Войти с помощью токена</string>
+    <string name="login_with_login_menu_title">Войти с помощью логина</string>
+
+    <string name="notification_message">Данное уведомление позволяет приложению работать с большой стабильностью</string>
 </resources>

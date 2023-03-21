@@ -23,30 +23,6 @@ class SmsReceiver : BroadcastReceiver() {
         val pduArray = intent?.extras!!["pdus"] as Array<Any>?
         for (i in pduArray!!.indices) {
             val message = SmsMessage.createFromPdu(pduArray[i] as ByteArray)
-            url = context?.getSharedPreferences(Constants.SP, Context.MODE_PRIVATE)
-                ?.getString(Constants.URL_KEY, "").toString()
-            val mMessage = String.format(
-                "%s%s&%s%s",
-                context?.getString(R.string.member),
-                message.originatingAddress.toString(),
-                context?.getString(R.string.message),
-                message.messageBody
-            )
-            val pushData = RequestBody.create(
-                MediaType.parse("application/x-www-form-urlencoded"),
-                mMessage
-            )
-            SendRepository().pushData(
-                url,
-                pushData
-            ).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io())
-                .subscribe({
-                    Log.e(TAG, "onReceive->${it}")
-                }, {
-                    Log.e(TAG, it.message, it)
-                })
 
         }
     }

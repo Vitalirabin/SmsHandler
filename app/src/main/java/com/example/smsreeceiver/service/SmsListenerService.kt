@@ -7,9 +7,8 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.smsreeceiver.presentation.MainActivity
+import com.example.smsreeceiver.MainActivity
 import com.example.smsreeceiver.R
-import com.example.smsreeceiver.broadcast.CallReceiver
 import com.example.smsreeceiver.broadcast.SmsReceiver
 
 
@@ -19,7 +18,6 @@ class SmsListenerService : Service() {
     }
 
     private val smsReceiver = SmsReceiver()
-    private val callReceiver = CallReceiver()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -62,9 +60,7 @@ class SmsListenerService : Service() {
                 .build()
         }
         startForeground(234567, notification)
-        startCallReceiver()
         startSmsReceiver()
-
         return START_NOT_STICKY
     }
 
@@ -72,12 +68,6 @@ class SmsListenerService : Service() {
         val intentFilter = IntentFilter("android.provider.Telephony.SMS_RECEIVED")
         intentFilter.priority = 100
         registerReceiver(smsReceiver, intentFilter)
-    }
-
-    private fun startCallReceiver() {
-        val intentFilter = IntentFilter("android.intent.action.PHONE_STATE")
-        intentFilter.priority = 100
-        registerReceiver(callReceiver, intentFilter)
     }
 
     override fun onDestroy() {
