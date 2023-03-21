@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SmsReceiver</string>
+
+    <string name="enter_token">Введите токен</string>
+    <string name="enter_login">Введите логин</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="start_handle">Запустить отправку смс</string>
+</resources>
