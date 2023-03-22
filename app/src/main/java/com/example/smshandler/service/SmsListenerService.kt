@@ -1,4 +1,4 @@
-package com.example.smsreeceiver.service
+package com.example.smshandler.service
 
 import android.app.*
 import android.content.Intent
@@ -7,9 +7,9 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.smsreeceiver.MainActivity
-import com.example.smsreeceiver.R
-import com.example.smsreeceiver.broadcast.SmsReceiver
+import com.example.smshandler.MainActivity
+import com.example.smshandler.R
+import com.example.smshandler.broadcast.SmsReceiver
 
 
 class SmsListenerService : Service() {

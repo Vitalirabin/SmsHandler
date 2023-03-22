@@ -1,4 +1,4 @@
-package com.example.smsreeceiver
+package com.example.smshandler
 
 data class PostModel(
     val version:String,

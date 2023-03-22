@@ -1,4 +1,4 @@
-package com.example.smsreeceiver
+package com.example.smshandler
 
 object Constants {
     const val SP = "sp"

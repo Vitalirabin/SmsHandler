@@ -1,6 +1,6 @@
-package com.example.smsreeceiver.network
+package com.example.smshandler.network
 
-import com.example.smsreeceiver.PostModel
+import com.example.smshandler.PostModel
 import io.reactivex.rxjava3.core.Single
 
 class SendRepository() {

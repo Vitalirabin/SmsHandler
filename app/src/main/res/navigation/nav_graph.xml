@@ -5,10 +5,10 @@
     app:startDestination="@id/tokenFragment">
     <fragment
         android:id="@+id/tokenFragment"
-        android:name="com.example.smsreeceiver.presentation.TokenFragment"
+        android:name="com.example.smshandler.presentation.TokenFragment"
         android:label="TokenFragment" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.smsreeceiver.presentation.LoginFragment"
+        android:name="com.example.smshandler.presentation.LoginFragment"
         android:label="LoginFragment" />
 </navigation>

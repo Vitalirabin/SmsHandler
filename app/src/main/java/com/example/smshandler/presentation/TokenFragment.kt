@@ -1,7 +1,6 @@
-package com.example.smsreeceiver.presentation
+package com.example.smshandler.presentation
 
 import android.Manifest
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,13 +12,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import com.example.smsreeceiver.Constants.NUMBER
-import com.example.smsreeceiver.Constants.SP
-import com.example.smsreeceiver.Constants.TOKEN
-import com.example.smsreeceiver.Constants.TOKEN_OR_LOGIN
-import com.example.smsreeceiver.R
-import com.example.smsreeceiver.databinding.FragmentTokenBinding
-import com.example.smsreeceiver.service.SmsListenerService
+import com.example.smshandler.Constants.NUMBER
+import com.example.smshandler.Constants.SP
+import com.example.smshandler.Constants.TOKEN
+import com.example.smshandler.Constants.TOKEN_OR_LOGIN
+import com.example.smshandler.R
+import com.example.smshandler.databinding.FragmentTokenBinding
+import com.example.smshandler.service.SmsListenerService
 
 class TokenFragment : Fragment() {
 

@@ -1,11 +1,11 @@
-package com.example.smsreeceiver
+package com.example.smshandler
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI.setupWithNavController
-import com.example.smsreeceiver.databinding.ActivityMainBinding
+import com.example.smshandler.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.example.smsreeceiver.network
+package com.example.smshandler.network
 
 import android.util.Log
 import okhttp3.OkHttpClient

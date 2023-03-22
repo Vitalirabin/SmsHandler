@@ -1,4 +1,4 @@
-package com.example.smsreeceiver.broadcast
+package com.example.smshandler.broadcast
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,15 +8,15 @@ import android.telephony.SmsMessage
 import android.text.format.Formatter
 import android.util.Log
 import android.widget.Toast
-import com.example.smsreeceiver.Constants.LOGIN
-import com.example.smsreeceiver.Constants.NUMBER
-import com.example.smsreeceiver.Constants.PASSWORD
-import com.example.smsreeceiver.Constants.SP
-import com.example.smsreeceiver.Constants.TOKEN
-import com.example.smsreeceiver.Constants.TOKEN_OR_LOGIN
-import com.example.smsreeceiver.Constants.URL
-import com.example.smsreeceiver.PostModel
-import com.example.smsreeceiver.network.SendRepository
+import com.example.smshandler.Constants.LOGIN
+import com.example.smshandler.Constants.NUMBER
+import com.example.smshandler.Constants.PASSWORD
+import com.example.smshandler.Constants.SP
+import com.example.smshandler.Constants.TOKEN
+import com.example.smshandler.Constants.TOKEN_OR_LOGIN
+import com.example.smshandler.Constants.URL
+import com.example.smshandler.PostModel
+import com.example.smshandler.network.SendRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
