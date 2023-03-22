@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager
 import android.telephony.SmsMessage
 import android.text.format.Formatter
 import android.util.Log
+import android.widget.Toast
 import com.example.smsreeceiver.Constants.LOGIN
 import com.example.smsreeceiver.Constants.NUMBER
 import com.example.smsreeceiver.Constants.PASSWORD
@@ -14,7 +15,6 @@ import com.example.smsreeceiver.Constants.SP
 import com.example.smsreeceiver.Constants.TOKEN
 import com.example.smsreeceiver.Constants.TOKEN_OR_LOGIN
 import com.example.smsreeceiver.Constants.URL
-import com.example.smsreeceiver.HandleNumbers
 import com.example.smsreeceiver.PostModel
 import com.example.smsreeceiver.network.SendRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -47,51 +47,27 @@ class SmsReceiver : BroadcastReceiver() {
 
             val data = PostModel("1.0.0", sender, mMessage, phoneNumber, ip)
             val repository = SendRepository()
-            when (sender) {
-                HandleNumbers.NINE_HUNDRED.value -> {
-                    if (tokenOrLogin == true) {
-                        repository.pushDataWithToken(token, URL, data).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .unsubscribeOn(Schedulers.io())
-                            .subscribe({
-                                Log.d(TAG, "onReceive->${it}")
-                            }, {
-                                Log.e(TAG, it.message, it)
-                            })
-                    } else {
-                        repository.pushDataWithLogin(login, password, URL, data)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .unsubscribeOn(Schedulers.io())
-                            .subscribe({
-                                Log.d(TAG, "onReceive->${it}")
-                            }, {
-                                Log.e(TAG, it.message, it)
-                            })
-                    }
-                }
-                HandleNumbers.TINKOFF.value -> {
-                    if (tokenOrLogin == true) {
-                        repository.pushDataWithToken(token, URL, data).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .unsubscribeOn(Schedulers.io())
-                            .subscribe({
-                                Log.d(TAG, "onReceive->${it}")
-                            }, {
-                                Log.e(TAG, it.message, it)
-                            })
-                    } else {
-                        repository.pushDataWithLogin(login, password, URL, data)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .unsubscribeOn(Schedulers.io())
-                            .subscribe({
-                                Log.d(TAG, "onReceive->${it}")
-                            }, {
-                                Log.e(TAG, it.message, it)
-                            })
-                    }
-                }
+            if (tokenOrLogin == true) {
+                repository.pushDataWithToken(token, URL, data).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribe({
+                        Toast.makeText(context, "Пришёл ответ", Toast.LENGTH_SHORT).show()
+                    }, {
+                        Log.e(TAG, it.message, it)
+                        Toast.makeText(context, "Пришёл пустой ответ", Toast.LENGTH_SHORT).show()
+                    })
+            } else {
+                repository.pushDataWithLogin(login, password, URL, data)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribe({
+                        Toast.makeText(context, "Пришёл ответ", Toast.LENGTH_SHORT).show()
+                    }, {
+                        Log.e(TAG, it.message, it)
+                        Toast.makeText(context, "Пришёл пустой ответ", Toast.LENGTH_SHORT).show()
+                    })
             }
         }
     }
