@@ -1,6 +1,7 @@
 package com.example.smshandler.presentation
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -53,9 +54,27 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (isServiceRunning(SmsListenerService::class.java)) {
+            binding.textInputLogin.visibility = View.INVISIBLE
+            binding.textInputPassword.visibility = View.INVISIBLE
+            binding.textInputNumber.visibility = View.INVISIBLE
+            binding.startServiceWithLoginButton.visibility = View.INVISIBLE
+            binding.startServiceWithLoginButton.isClickable = false
+            binding.serviceWorkedMessage.visibility = View.VISIBLE
+        }
         binding.startServiceWithLoginButton.setOnClickListener {
             onClickStartService()
         }
+    }
+
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = context?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun onClickStartService() {
@@ -80,14 +99,7 @@ class LoginFragment : Fragment() {
                 SmsListenerService::class.java
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireContext().startForegroundService(
-                Intent(
-                    requireContext(),
-                    SmsListenerService::class.java
-                )
-            )
-        } else requireContext().startService(
+        requireContext().startForegroundService(
             Intent(
                 requireContext(),
                 SmsListenerService::class.java

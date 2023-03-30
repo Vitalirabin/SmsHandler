@@ -1,6 +1,7 @@
 package com.example.smshandler.presentation
 
 import android.Manifest
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -31,6 +32,7 @@ class TokenFragment : Fragment() {
             Manifest.permission.RECEIVE_SMS,
             Manifest.permission.READ_SMS,
             Manifest.permission.POST_NOTIFICATIONS,
+            Manifest.permission.READ_PRECISE_PHONE_STATE,
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_CALL_LOG
         )
@@ -58,9 +60,26 @@ class TokenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (isServiceRunning(SmsListenerService::class.java)) {
+            binding.textInputToken.visibility = View.INVISIBLE
+            binding.textInputNumber.visibility = View.INVISIBLE
+            binding.startServiceWithTokenButton.visibility = View.INVISIBLE
+            binding.startServiceWithTokenButton.isClickable = false
+            binding.serviceWorkedMessage.visibility=View.VISIBLE
+        }
         binding.startServiceWithTokenButton.setOnClickListener {
             onClickStartService()
         }
+    }
+
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = context?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun onClickStartService() {
@@ -83,14 +102,7 @@ class TokenFragment : Fragment() {
                 SmsListenerService::class.java
             )
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            requireContext().startForegroundService(
-                Intent(
-                    requireContext(),
-                    SmsListenerService::class.java
-                )
-            )
-        } else requireContext().startService(
+        requireContext().startForegroundService(
             Intent(
                 requireContext(),
                 SmsListenerService::class.java
