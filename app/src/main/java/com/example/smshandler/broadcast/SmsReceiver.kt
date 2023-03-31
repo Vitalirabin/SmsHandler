@@ -1,5 +1,6 @@
 package com.example.smshandler.broadcast
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,11 +16,16 @@ import com.example.smshandler.Constants.PASSWORD
 import com.example.smshandler.Constants.SP
 import com.example.smshandler.Constants.TOKEN
 import com.example.smshandler.Constants.TOKEN_OR_LOGIN
+import com.example.smshandler.PostModel
+import com.example.smshandler.network.SendRepository
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 private const val TAG = "SmsReceiver"
 
 class SmsReceiver : BroadcastReceiver() {
+    @SuppressLint("CheckResult")
     override fun onReceive(context: Context?, intent: Intent?) {
         val pduArray = intent?.extras!!["pdus"] as Array<Any>?
         for (i in pduArray!!.indices) {
@@ -46,34 +52,31 @@ class SmsReceiver : BroadcastReceiver() {
             if (intent.extras!!.containsKey("subscription")) {
                 whichSIM = intent.extras!!.getInt("subscription")
             }
-            val bundle: Bundle? = intent.extras
-            val slot: Int? = bundle?.getInt("slot", -1)
-            Log.d("slot", slot.toString())
-          //  Toast.makeText(context, "$slot", Toast.LENGTH_LONG).show()
-            /* val data = PostModel("1.0.0", sender, mMessage, phoneNumber, ip)
-             val repository = SendRepository()
-             if (tokenOrLogin == true) {
-                 repository.pushDataWithToken(token, URL, data).subscribeOn(Schedulers.io())
-                     .observeOn(AndroidSchedulers.mainThread())
-                     .unsubscribeOn(Schedulers.io())
-                     .subscribe({
-                         Toast.makeText(context, "Пришёл ответ", Toast.LENGTH_SHORT).show()
-                     }, {
-                         Log.e(TAG, it.message, it)
-                         Toast.makeText(context, "Пришёл пустой ответ", Toast.LENGTH_SHORT).show()
-                     })
-             } else {
-                 repository.pushDataWithLogin(login, password, URL, data)
-                     .subscribeOn(Schedulers.io())
-                     .observeOn(AndroidSchedulers.mainThread())
-                     .unsubscribeOn(Schedulers.io())
-                     .subscribe({
-                         Toast.makeText(context, "Пришёл ответ", Toast.LENGTH_SHORT).show()
-                     }, {
-                         Log.e(TAG, it.message, it)
-                         Toast.makeText(context, "Пришёл пустой ответ", Toast.LENGTH_SHORT).show()
-                     })
-             }*/
+            Toast.makeText(context, "$whichSIM", Toast.LENGTH_LONG).show()
+            val data = PostModel("1.0.0", sender, mMessage, phoneNumber, ip)
+            val repository = SendRepository()
+            if (tokenOrLogin == true) {
+                repository.pushDataWithToken(token, data).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribe({
+                   //     Toast.makeText(context, "Пришёл ответ", Toast.LENGTH_SHORT).show()
+                    }, {
+                        Log.e(TAG, it.message, it)
+                    //    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    })
+            } else {
+                repository.pushDataWithLogin(login, password, data)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribe({
+                     //   Toast.makeText(context, "Пришёл ответ", Toast.LENGTH_SHORT).show()
+                    }, {
+                        Log.e(TAG, it.message, it)
+                     //   Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    })
+            }
         }
     }
 }

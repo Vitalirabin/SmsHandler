@@ -8,18 +8,22 @@ import retrofit2.http.POST
 import retrofit2.http.Url
 
 interface RemoteApi {
-    @POST
+    @POST("api/handle/sms/")
     fun pushDataWithToken(
         @Header("Autorization") token: String,
-        @Url url: String,
         @Body body: PostModel
     ): Single<String>
 
-    @POST
+    @POST("api/handle/sms/")
     fun pushDataWithLogin(
         @Header("username") userName: String,
         @Header("password") password: String,
-        @Url url: String,
         @Body body: PostModel
     ): Single<String>
+
+    @POST("api/auth/sms/")
+    fun authorizationWithLogin(@Body body: LoginAuthorizationModel): Single<String>
+
+    @POST("api/auth/sms/")
+    fun authorizationWithToken(@Body body: TokenAuthorizationModel): Single<String>
 }

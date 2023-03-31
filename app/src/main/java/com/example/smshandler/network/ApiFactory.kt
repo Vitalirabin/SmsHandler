@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 object ApiFactory {
-    private const val BASE_URL = "https://google.com"
+    private const val BASE_URL = "http://194.58.92.160:8000/"
 
     fun getApi(): RemoteApi {
         return getClient(BASE_URL).create<RemoteApi>()
@@ -27,6 +27,7 @@ object ApiFactory {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .addConverterFactory(NullOnEmptyConverterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .client(okhttp())
             .build()

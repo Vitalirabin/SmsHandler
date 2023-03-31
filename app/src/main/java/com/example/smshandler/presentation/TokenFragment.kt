@@ -1,12 +1,14 @@
 package com.example.smshandler.presentation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +21,12 @@ import com.example.smshandler.Constants.TOKEN
 import com.example.smshandler.Constants.TOKEN_OR_LOGIN
 import com.example.smshandler.R
 import com.example.smshandler.databinding.FragmentTokenBinding
+import com.example.smshandler.network.LoginAuthorizationModel
+import com.example.smshandler.network.SendRepository
+import com.example.smshandler.network.TokenAuthorizationModel
 import com.example.smshandler.service.SmsListenerService
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class TokenFragment : Fragment() {
 
@@ -46,6 +53,7 @@ class TokenFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentTokenBinding
+    private lateinit var repository: SendRepository
 
 
     override fun onCreateView(
@@ -55,20 +63,26 @@ class TokenFragment : Fragment() {
     ): View {
         binding = FragmentTokenBinding.inflate(inflater, container, false)
         checkPermissions()
+        repository = SendRepository()
         return binding.root
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (isServiceRunning(SmsListenerService::class.java)) {
+        onServiceRunning(isServiceRunning(SmsListenerService::class.java))
+        binding.startServiceWithTokenButton.setOnClickListener {
+            onClickStartService()
+        }
+    }
+
+    private fun onServiceRunning(isRunning: Boolean) {
+        if (isRunning) {
             binding.textInputToken.visibility = View.INVISIBLE
             binding.textInputNumber.visibility = View.INVISIBLE
             binding.startServiceWithTokenButton.visibility = View.INVISIBLE
             binding.startServiceWithTokenButton.isClickable = false
-            binding.serviceWorkedMessage.visibility=View.VISIBLE
-        }
-        binding.startServiceWithTokenButton.setOnClickListener {
-            onClickStartService()
+            binding.serviceWorkedMessage.visibility = View.VISIBLE
         }
     }
 
@@ -82,16 +96,37 @@ class TokenFragment : Fragment() {
         return false
     }
 
+    @SuppressLint("CheckResult")
     private fun onClickStartService() {
         val token = binding.textInputToken.text.toString()
         val number = binding.textInputNumber.text.toString()
         if (token != "" || number != "") {
-            context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
-                ?.putBoolean(TOKEN_OR_LOGIN, true)
-                ?.putString(TOKEN, token)
-                ?.putString(NUMBER, number)
-                ?.apply()
-            startSmsListenerService()
+            repository.authorizationWithToken(TokenAuthorizationModel(token))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    Log.d("TokenFragment", "subscribe")
+                    context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
+                        ?.putBoolean(TOKEN_OR_LOGIN, true)
+                        ?.putString(TOKEN, token)
+                        ?.putString(NUMBER, number)
+                        ?.apply()
+                    startSmsListenerService()
+                    onServiceRunning(true)
+                }, {
+                    Log.e("TokenFragment", it.message, it)
+                    if (it.message.equals("401"))
+                        Toast.makeText(
+                            context,
+                            getString(R.string.bad_authorization_message),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    else Toast.makeText(
+                        context,
+                        it.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                })
         } else Toast.makeText(context, getString(R.string.enter_all), Toast.LENGTH_SHORT).show()
     }
 
