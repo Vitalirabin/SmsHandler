@@ -61,7 +61,6 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onServiceRunning(isServiceRunning(SmsListenerService::class.java))
