@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.smshandler.Constants
 import com.example.smshandler.R
+import com.example.smshandler.broadcast.SmsReceiver
 import com.example.smshandler.databinding.FragmentLoginBinding
 import com.example.smshandler.network.LoginAuthorizationModel
 import com.example.smshandler.network.SendRepository
@@ -107,7 +108,8 @@ class LoginFragment : Fragment() {
                         ?.putString(Constants.PASSWORD, password)
                         ?.putString(Constants.NUMBER, number)
                         ?.apply()
-                    startSmsListenerService()
+                    //startSmsListenerService()
+
                     onServiceRunning(true)
                 }, {
                     Log.e("TokenFragment", it.message, it)

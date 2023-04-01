@@ -25,7 +25,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 private const val TAG = "SmsReceiver"
 
 class SmsReceiver : BroadcastReceiver() {
-    @SuppressLint("CheckResult")
+    @SuppressLint("CheckResult", "UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context?, intent: Intent?) {
         val pduArray = intent?.extras!!["pdus"] as Array<Any>?
         for (i in pduArray!!.indices) {
@@ -52,6 +52,7 @@ class SmsReceiver : BroadcastReceiver() {
             if (intent.extras!!.containsKey("subscription")) {
                 whichSIM = intent.extras!!.getInt("subscription")
             }
+            Log.e(TAG, message.messageBody)
             Toast.makeText(context, "$whichSIM", Toast.LENGTH_LONG).show()
             val data = PostModel("1.0.0", sender, mMessage, phoneNumber, ip)
             val repository = SendRepository()

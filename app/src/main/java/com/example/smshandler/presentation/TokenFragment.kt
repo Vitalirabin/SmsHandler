@@ -6,8 +6,11 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +24,6 @@ import com.example.smshandler.Constants.TOKEN
 import com.example.smshandler.Constants.TOKEN_OR_LOGIN
 import com.example.smshandler.R
 import com.example.smshandler.databinding.FragmentTokenBinding
-import com.example.smshandler.network.LoginAuthorizationModel
 import com.example.smshandler.network.SendRepository
 import com.example.smshandler.network.TokenAuthorizationModel
 import com.example.smshandler.service.SmsListenerService
@@ -63,6 +65,7 @@ class TokenFragment : Fragment() {
     ): View {
         binding = FragmentTokenBinding.inflate(inflater, container, false)
         checkPermissions()
+        workInBatterySaveMode()
         repository = SendRepository()
         return binding.root
     }
@@ -110,7 +113,7 @@ class TokenFragment : Fragment() {
                         ?.putString(TOKEN, token)
                         ?.putString(NUMBER, number)
                         ?.apply()
-                    startSmsListenerService()
+                   // startSmsListenerService()
                     onServiceRunning(true)
                 }, {
                     Log.e("TokenFragment", it.message, it)
@@ -159,6 +162,18 @@ class TokenFragment : Fragment() {
                     return
                 }
             }
+        }
+    }
+
+    fun workInBatterySaveMode(){
+        val packageName = context?.packageName
+        val pm: PowerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
+        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.data = Uri.parse("package:$packageName")
+            context?.startActivity(intent)
         }
     }
 
