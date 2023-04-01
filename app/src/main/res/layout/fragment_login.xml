@@ -23,7 +23,6 @@
         android:layout_marginEnd="16dp"
         android:hint="@string/enter_login"
         app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -46,7 +45,6 @@
         android:layout_marginEnd="16dp"
         android:hint="@string/enter_password"
         app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white"
         app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +66,6 @@
         android:hint="@string/enter_number"
         android:inputType="number"
         app:boxBackgroundMode="outline"
-        app:boxBackgroundColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_password">
