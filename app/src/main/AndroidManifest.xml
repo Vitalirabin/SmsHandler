@@ -36,19 +36,9 @@
         <service android:name=".service.SmsListenerService" />
 
         <receiver
-            android:name=".broadcast.BootReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name=".broadcast.SmsReceiver"
             android:exported="true"
-            android:enabled="false"
+            android:enabled="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />

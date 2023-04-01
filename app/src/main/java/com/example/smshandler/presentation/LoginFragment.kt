@@ -16,6 +16,8 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.smshandler.Constants
+import com.example.smshandler.Constants.ENABLE
+import com.example.smshandler.Constants.SP
 import com.example.smshandler.R
 import com.example.smshandler.broadcast.SmsReceiver
 import com.example.smshandler.databinding.FragmentLoginBinding
@@ -59,12 +61,21 @@ class LoginFragment : Fragment() {
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         repository = SendRepository()
+        binding.stopSendSmsWithTokenButton.setOnClickListener {
+            context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
+                ?.putBoolean(ENABLE, false)
+                ?.apply()
+            onServiceRunning(false)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onServiceRunning(isServiceRunning(SmsListenerService::class.java))
+        onServiceRunning(
+            context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.getBoolean(ENABLE, false)
+                ?: false
+        )
         binding.startServiceWithLoginButton.setOnClickListener {
             onClickStartService()
         }
@@ -77,7 +88,18 @@ class LoginFragment : Fragment() {
             binding.textInputNumber.visibility = View.INVISIBLE
             binding.startServiceWithLoginButton.visibility = View.INVISIBLE
             binding.startServiceWithLoginButton.isClickable = false
+            binding.stopSendSmsWithTokenButton.isClickable = true
             binding.serviceWorkedMessage.visibility = View.VISIBLE
+            binding.stopSendSmsWithTokenButton.visibility = View.VISIBLE
+        } else {
+            binding.textInputLogin.visibility = View.VISIBLE
+            binding.textInputPassword.visibility = View.VISIBLE
+            binding.textInputNumber.visibility = View.VISIBLE
+            binding.startServiceWithLoginButton.visibility = View.VISIBLE
+            binding.startServiceWithLoginButton.isClickable = true
+            binding.stopSendSmsWithTokenButton.isClickable = false
+            binding.serviceWorkedMessage.visibility = View.INVISIBLE
+            binding.stopSendSmsWithTokenButton.visibility = View.INVISIBLE
         }
     }
 
@@ -107,6 +129,7 @@ class LoginFragment : Fragment() {
                         ?.putString(Constants.LOGIN, login)
                         ?.putString(Constants.PASSWORD, password)
                         ?.putString(Constants.NUMBER, number)
+                        ?.putBoolean(Constants.ENABLE, true)
                         ?.apply()
                     //startSmsListenerService()
 

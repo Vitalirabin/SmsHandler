@@ -7,5 +7,5 @@ object Constants {
     const val LOGIN = "login"
     const val PASSWORD = "password"
     const val NUMBER = "number"
-    const val URL = "http://194.58.92.160:8000/api/handle/sms/"
+    const val ENABLE = "enable"
 }

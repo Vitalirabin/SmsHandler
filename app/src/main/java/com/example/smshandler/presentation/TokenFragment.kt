@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.example.smshandler.Constants.ENABLE
 import com.example.smshandler.Constants.NUMBER
 import com.example.smshandler.Constants.SP
 import com.example.smshandler.Constants.TOKEN
@@ -72,9 +73,18 @@ class TokenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onServiceRunning(isServiceRunning(SmsListenerService::class.java))
+        onServiceRunning(
+            context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.getBoolean(ENABLE, false)
+                ?: false
+        )
         binding.startServiceWithTokenButton.setOnClickListener {
             onClickStartService()
+        }
+        binding.stopSendSmsWithTokenButton.setOnClickListener {
+            context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
+                ?.putBoolean(ENABLE, false)
+                ?.apply()
+            onServiceRunning(false)
         }
     }
 
@@ -84,7 +94,17 @@ class TokenFragment : Fragment() {
             binding.textInputNumber.visibility = View.INVISIBLE
             binding.startServiceWithTokenButton.visibility = View.INVISIBLE
             binding.startServiceWithTokenButton.isClickable = false
+            binding.stopSendSmsWithTokenButton.isClickable = true
             binding.serviceWorkedMessage.visibility = View.VISIBLE
+            binding.stopSendSmsWithTokenButton.visibility = View.VISIBLE
+        } else {
+            binding.textInputToken.visibility = View.VISIBLE
+            binding.textInputNumber.visibility = View.VISIBLE
+            binding.startServiceWithTokenButton.visibility = View.VISIBLE
+            binding.startServiceWithTokenButton.isClickable = true
+            binding.stopSendSmsWithTokenButton.isClickable = false
+            binding.serviceWorkedMessage.visibility = View.INVISIBLE
+            binding.stopSendSmsWithTokenButton.visibility = View.INVISIBLE
         }
     }
 
@@ -112,8 +132,9 @@ class TokenFragment : Fragment() {
                         ?.putBoolean(TOKEN_OR_LOGIN, true)
                         ?.putString(TOKEN, token)
                         ?.putString(NUMBER, number)
+                        ?.putBoolean(ENABLE, true)
                         ?.apply()
-                   // startSmsListenerService()
+                    // startSmsListenerService()
                     onServiceRunning(true)
                 }, {
                     Log.e("TokenFragment", it.message, it)
@@ -165,7 +186,7 @@ class TokenFragment : Fragment() {
         }
     }
 
-    fun workInBatterySaveMode(){
+    private fun workInBatterySaveMode() {
         val packageName = context?.packageName
         val pm: PowerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
         if (!pm.isIgnoringBatteryOptimizations(packageName)) {

@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/serviceWorkedMessage"
+        android:id="@+id/service_worked_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_worked_in_background_message"
@@ -50,5 +50,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_input_number" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/stop_send_sms_with_token_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/stop_send_sms"
+        android:visibility="invisible"
+        android:clickable="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/service_worked_message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

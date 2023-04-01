@@ -8,6 +8,7 @@
     <string name="enter_all">Заполните все поля!!!</string>
     <string name="start_handle">Запустить отправку смс</string>
     <string name="app_worked_in_background_message">Приложение работает в фоновом режиме</string>
+    <string name="stop_send_sms">Остановить отправку смс</string>
     <string name="bad_authorization_message">Не верные данные для входа</string>
 
     <string name="login_with_token_menu_title">Войти с помощью токена</string>
