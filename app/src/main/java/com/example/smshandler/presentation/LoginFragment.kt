@@ -71,7 +71,7 @@ class LoginFragment : Fragment() {
             context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.getBoolean(ENABLE, false)
                 ?: false
         )
-        binding.startServiceWithLoginButton.setOnClickListener {
+        binding.startSendSmsWithLoginButton.setOnClickListener {
             onClickStartService()
         }
     }
@@ -81,8 +81,8 @@ class LoginFragment : Fragment() {
             binding.textInputLogin.visibility = View.INVISIBLE
             binding.textInputPassword.visibility = View.INVISIBLE
             binding.textInputNumber.visibility = View.INVISIBLE
-            binding.startServiceWithLoginButton.visibility = View.INVISIBLE
-            binding.startServiceWithLoginButton.isClickable = false
+            binding.startSendSmsWithLoginButton.visibility = View.INVISIBLE
+            binding.startSendSmsWithLoginButton.isClickable = false
             binding.stopSendSmsWithTokenButton.isClickable = true
             binding.serviceWorkedMessage.visibility = View.VISIBLE
             binding.stopSendSmsWithTokenButton.visibility = View.VISIBLE
@@ -90,8 +90,8 @@ class LoginFragment : Fragment() {
             binding.textInputLogin.visibility = View.VISIBLE
             binding.textInputPassword.visibility = View.VISIBLE
             binding.textInputNumber.visibility = View.VISIBLE
-            binding.startServiceWithLoginButton.visibility = View.VISIBLE
-            binding.startServiceWithLoginButton.isClickable = true
+            binding.startSendSmsWithLoginButton.visibility = View.VISIBLE
+            binding.startSendSmsWithLoginButton.isClickable = true
             binding.stopSendSmsWithTokenButton.isClickable = false
             binding.serviceWorkedMessage.visibility = View.INVISIBLE
             binding.stopSendSmsWithTokenButton.visibility = View.INVISIBLE
@@ -100,21 +100,21 @@ class LoginFragment : Fragment() {
 
     @SuppressLint("CheckResult")
     private fun onClickStartService() {
-        val login = binding.textInputLogin.text.toString()
-        val password = binding.textInputPassword.text.toString()
-        val number = binding.textInputNumber.text.toString()
+        val login = binding.textInputLogin.editText?.text.toString()
+        val password = binding.textInputPassword.editText?.text.toString()
+        val number = binding.textInputNumber.editText?.text.toString()
         if (login != "" || password != "" || number != "") {
             repository.authorizationWithLogin(LoginAuthorizationModel(login, password))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     Log.d("TokenFragment", "subscribe")
-                    context?.getSharedPreferences(Constants.SP, Context.MODE_PRIVATE)?.edit()
+                    context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
                         ?.putBoolean(Constants.TOKEN_OR_LOGIN, false)
                         ?.putString(Constants.LOGIN, login)
                         ?.putString(Constants.PASSWORD, password)
                         ?.putString(Constants.NUMBER, number)
-                        ?.putBoolean(Constants.ENABLE, true)
+                        ?.putBoolean(ENABLE, true)
                         ?.apply()
                     onReceiverEnableOrDisable(true)
                 }, {

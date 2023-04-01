@@ -75,7 +75,7 @@ class TokenFragment : Fragment() {
             context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.getBoolean(ENABLE, false)
                 ?: false
         )
-        binding.startServiceWithTokenButton.setOnClickListener {
+        binding.startSendSmsWithTokenButton.setOnClickListener {
             onClickStartService()
         }
         binding.stopSendSmsWithTokenButton.setOnClickListener {
@@ -90,16 +90,16 @@ class TokenFragment : Fragment() {
         if (isEnable) {
             binding.textInputToken.visibility = View.INVISIBLE
             binding.textInputNumber.visibility = View.INVISIBLE
-            binding.startServiceWithTokenButton.visibility = View.INVISIBLE
-            binding.startServiceWithTokenButton.isClickable = false
+            binding.startSendSmsWithTokenButton.visibility = View.INVISIBLE
+            binding.startSendSmsWithTokenButton.isClickable = false
             binding.stopSendSmsWithTokenButton.isClickable = true
             binding.serviceWorkedMessage.visibility = View.VISIBLE
             binding.stopSendSmsWithTokenButton.visibility = View.VISIBLE
         } else {
             binding.textInputToken.visibility = View.VISIBLE
             binding.textInputNumber.visibility = View.VISIBLE
-            binding.startServiceWithTokenButton.visibility = View.VISIBLE
-            binding.startServiceWithTokenButton.isClickable = true
+            binding.startSendSmsWithTokenButton.visibility = View.VISIBLE
+            binding.startSendSmsWithTokenButton.isClickable = true
             binding.stopSendSmsWithTokenButton.isClickable = false
             binding.serviceWorkedMessage.visibility = View.INVISIBLE
             binding.stopSendSmsWithTokenButton.visibility = View.INVISIBLE
@@ -108,8 +108,8 @@ class TokenFragment : Fragment() {
     
     @SuppressLint("CheckResult")
     private fun onClickStartService() {
-        val token = binding.textInputToken.text.toString()
-        val number = binding.textInputNumber.text.toString()
+        val token = binding.textInputToken.editText?.text.toString()
+        val number = binding.textInputNumber.editText?.text.toString()
         if (token != "" || number != "") {
             repository.authorizationWithToken(TokenAuthorizationModel(token))
                 .subscribeOn(Schedulers.io())
