@@ -2,9 +2,7 @@ package com.example.smshandler.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -19,17 +17,13 @@ import com.example.smshandler.Constants
 import com.example.smshandler.Constants.ENABLE
 import com.example.smshandler.Constants.SP
 import com.example.smshandler.R
-import com.example.smshandler.broadcast.SmsReceiver
 import com.example.smshandler.databinding.FragmentLoginBinding
 import com.example.smshandler.network.LoginAuthorizationModel
 import com.example.smshandler.network.SendRepository
-import com.example.smshandler.service.SmsListenerService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
 class LoginFragment : Fragment() {
-
-    private lateinit var repository: SendRepository
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 416
@@ -53,6 +47,7 @@ class LoginFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentLoginBinding
+    private lateinit var repository: SendRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,14 +60,14 @@ class LoginFragment : Fragment() {
             context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
                 ?.putBoolean(ENABLE, false)
                 ?.apply()
-            onServiceRunning(false)
+            onReceiverEnableOrDisable(false)
         }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onServiceRunning(
+        onReceiverEnableOrDisable(
             context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.getBoolean(ENABLE, false)
                 ?: false
         )
@@ -81,8 +76,8 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun onServiceRunning(isRunning: Boolean) {
-        if (isRunning) {
+    private fun onReceiverEnableOrDisable(isEnable: Boolean) {
+        if (isEnable) {
             binding.textInputLogin.visibility = View.INVISIBLE
             binding.textInputPassword.visibility = View.INVISIBLE
             binding.textInputNumber.visibility = View.INVISIBLE
@@ -103,16 +98,6 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = context?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
-    }
-
     @SuppressLint("CheckResult")
     private fun onClickStartService() {
         val login = binding.textInputLogin.text.toString()
@@ -131,9 +116,7 @@ class LoginFragment : Fragment() {
                         ?.putString(Constants.NUMBER, number)
                         ?.putBoolean(Constants.ENABLE, true)
                         ?.apply()
-                    //startSmsListenerService()
-
-                    onServiceRunning(true)
+                    onReceiverEnableOrDisable(true)
                 }, {
                     Log.e("TokenFragment", it.message, it)
                     if (it.message.equals("401"))
@@ -149,22 +132,6 @@ class LoginFragment : Fragment() {
                     ).show()
                 })
         } else Toast.makeText(context, getString(R.string.enter_all), Toast.LENGTH_SHORT).show()
-    }
-
-    private fun startSmsListenerService() {
-        requireContext().stopService(
-            Intent(
-                requireContext(),
-                SmsListenerService::class.java
-            )
-        )
-        requireContext().startForegroundService(
-            Intent(
-                requireContext(),
-                SmsListenerService::class.java
-            )
-        )
-
     }
 
     private fun checkPermissions() {

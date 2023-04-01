@@ -33,8 +33,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <service android:name=".service.SmsListenerService" />
-
         <receiver
             android:name=".broadcast.SmsReceiver"
             android:exported="true"

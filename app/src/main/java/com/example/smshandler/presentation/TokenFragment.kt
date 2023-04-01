@@ -2,7 +2,6 @@ package com.example.smshandler.presentation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -27,7 +26,6 @@ import com.example.smshandler.R
 import com.example.smshandler.databinding.FragmentTokenBinding
 import com.example.smshandler.network.SendRepository
 import com.example.smshandler.network.TokenAuthorizationModel
-import com.example.smshandler.service.SmsListenerService
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 
@@ -73,7 +71,7 @@ class TokenFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onServiceRunning(
+        onReceiverEnableOrDisable(
             context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.getBoolean(ENABLE, false)
                 ?: false
         )
@@ -84,12 +82,12 @@ class TokenFragment : Fragment() {
             context?.getSharedPreferences(SP, Context.MODE_PRIVATE)?.edit()
                 ?.putBoolean(ENABLE, false)
                 ?.apply()
-            onServiceRunning(false)
+            onReceiverEnableOrDisable(false)
         }
     }
 
-    private fun onServiceRunning(isRunning: Boolean) {
-        if (isRunning) {
+    private fun onReceiverEnableOrDisable(isEnable: Boolean) {
+        if (isEnable) {
             binding.textInputToken.visibility = View.INVISIBLE
             binding.textInputNumber.visibility = View.INVISIBLE
             binding.startServiceWithTokenButton.visibility = View.INVISIBLE
@@ -107,17 +105,7 @@ class TokenFragment : Fragment() {
             binding.stopSendSmsWithTokenButton.visibility = View.INVISIBLE
         }
     }
-
-    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = context?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-            if (serviceClass.name == service.service.className) {
-                return true
-            }
-        }
-        return false
-    }
-
+    
     @SuppressLint("CheckResult")
     private fun onClickStartService() {
         val token = binding.textInputToken.text.toString()
@@ -134,8 +122,7 @@ class TokenFragment : Fragment() {
                         ?.putString(NUMBER, number)
                         ?.putBoolean(ENABLE, true)
                         ?.apply()
-                    // startSmsListenerService()
-                    onServiceRunning(true)
+                    onReceiverEnableOrDisable(true)
                 }, {
                     Log.e("TokenFragment", it.message, it)
                     if (it.message.equals("401"))
@@ -152,22 +139,7 @@ class TokenFragment : Fragment() {
                 })
         } else Toast.makeText(context, getString(R.string.enter_all), Toast.LENGTH_SHORT).show()
     }
-
-    private fun startSmsListenerService() {
-        requireContext().stopService(
-            Intent(
-                requireContext(),
-                SmsListenerService::class.java
-            )
-        )
-        requireContext().startForegroundService(
-            Intent(
-                requireContext(),
-                SmsListenerService::class.java
-            )
-        )
-    }
-
+    
     private fun checkPermissions() {
         activity?.let { mActivity ->
             permissions.forEach {
@@ -186,6 +158,7 @@ class TokenFragment : Fragment() {
         }
     }
 
+    @SuppressLint("BatteryLife")
     private fun workInBatterySaveMode() {
         val packageName = context?.packageName
         val pm: PowerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
